@@ -1,3 +1,5 @@
+using System;
+using Agents;
 using Tick;
 using TMPro;
 using UnityEngine;
@@ -12,6 +14,12 @@ namespace UI {
         [SerializeField] private Button tickUpButton;
         [SerializeField] private Button tickDownButton;
         [SerializeField] private Button tickPauseButton;
+
+        [Header("Agents Panel")]
+        [SerializeField] private TMP_Text currentAgentsCount;
+        [SerializeField] private Button addAgentButton;
+        [SerializeField] private Button removeRandomAgentButton;
+        [SerializeField] private Button removeAllAgentsButton;
         
         private void Awake() {
             Instance = this;
@@ -21,7 +29,14 @@ namespace UI {
             tickDownButton.onClick.AddListener(() => { SetTickRate(-1); });
             tickPauseButton.onClick.AddListener(() => { SetTickRate(0); });
             
+            addAgentButton.onClick.AddListener(() => { AgentsManager.Instance.RequestAgentSpawn(); });
+            removeRandomAgentButton.onClick.AddListener(() => { AgentsManager.Instance.RequestAgentRemove(AgentRemoveType.Random); });
+            removeAllAgentsButton.onClick.AddListener(() => { AgentsManager.Instance.RequestAgentRemove(AgentRemoveType.All); });
+        }
+
+        private void Start() {
             RefreshTickUI();
+            RefreshAgentsUI();
         }
 
         public void SetTickRate(int tickValue) {
@@ -41,6 +56,10 @@ namespace UI {
             };
 
             currentTimeLabel.text = "Speed: " + visualSpeedMark;
+        }
+
+        public void RefreshAgentsUI() {
+            currentAgentsCount.text = "Agents: " + AgentsManager.Instance.GetAgentsCount();
         }
     }
 }
