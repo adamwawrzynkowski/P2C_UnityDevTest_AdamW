@@ -30,17 +30,20 @@ namespace Agents {
         public int GetAgentsCount() => registeredAgents.Count;
 
         public void RequestAgentSpawn() {
-            var newAgent = Instantiate(agentPrefab, agentsParent, true);
-            var agentComponent = newAgent.GetComponent<Agent>();
-            if (agentComponent == null) {
-                Debug.Log("Unable to find Agent component in the spawned object. Adding one...");
-                agentComponent = newAgent.AddComponent<Agent>();
+            var iterations = Input.GetKey(KeyCode.LeftShift) ? 10 : 1;
+            for (var i = 0; i < iterations; i++) {
+                var newAgent = Instantiate(agentPrefab, agentsParent, true);
+                var agentComponent = newAgent.GetComponent<Agent>();
+                if (agentComponent == null) {
+                    Debug.Log("Unable to find Agent component in the spawned object. Adding one...");
+                    agentComponent = newAgent.AddComponent<Agent>();
+                }
+            
+                RegisterAgent(agentComponent);
+                newAgent.transform.position = agentComponent.FindPoint(area);
+            
+                agentComponent.GoToDestination();
             }
-            
-            RegisterAgent(agentComponent);
-            newAgent.transform.position = agentComponent.FindPoint(area);
-            
-            agentComponent.GoToDestination();
         }
 
         public void RequestAgentRemove(AgentRemoveType type) {
