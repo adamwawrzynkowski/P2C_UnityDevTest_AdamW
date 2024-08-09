@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Agents;
 using Tick;
 using TMPro;
@@ -20,6 +22,11 @@ namespace UI {
         [SerializeField] private Button addAgentButton;
         [SerializeField] private Button removeRandomAgentButton;
         [SerializeField] private Button removeAllAgentsButton;
+
+        [Header("Console")]
+        [SerializeField] private TMP_Text console;
+
+        private List<string> consoleStrings = new List<string>();
         
         private void Awake() {
             Instance = this;
@@ -61,6 +68,25 @@ namespace UI {
 
         public void RefreshAgentsUI() {
             currentAgentsCount.text = "Agents: " + AgentsManager.Instance.GetAgentsCount();
+        }
+
+        private void RefreshConsole() {
+            console.text = "";
+            foreach (var consoleString in consoleStrings) {
+                console.text += consoleString;
+            }
+        }
+        
+        public void AddToConsole(string newString) {
+            consoleStrings.Add(newString + "\n");
+            StartCoroutine(ConsoleLoop());
+            RefreshConsole();
+        }
+
+        private IEnumerator ConsoleLoop() {
+            yield return new WaitForSeconds(3.0f);
+            if (consoleStrings.Count > 0) consoleStrings.RemoveAt(0);
+            RefreshConsole();
         }
     }
 }

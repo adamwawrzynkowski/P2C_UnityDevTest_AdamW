@@ -1,7 +1,6 @@
-using System;
 using DG.Tweening;
-using DG.Tweening.Core;
 using Tick;
+using UI;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -33,8 +32,7 @@ namespace Agents {
 
         private void GoalCompleted() {
             GoToDestination();
-            
-            
+            UIManager.Instance.AddToConsole("Agent " + GUID + " arrived.");
         }
 
         public void Unregister() {
