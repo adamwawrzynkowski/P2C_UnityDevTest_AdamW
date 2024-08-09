@@ -1,3 +1,4 @@
+using Agents;
 using Interface;
 using UI;
 using UnityEngine;
@@ -34,6 +35,7 @@ namespace Tick {
             
             // Set tick speed for Agents based on the tick ID
             currentTickSpeed = GetCurrentTick() switch {
+                5 => 4.0f,
                 4 => 2.0f,
                 3 => 1.0f,
                 2 => 0.5f,
@@ -44,6 +46,9 @@ namespace Tick {
             
             // Refresh tick UI
             RefreshTickUI();
+            
+            // 
+            AgentsManager.Instance.UpdateAgents();
         }
         
         // Compare current tick with new tick to detect the game is already paused
@@ -55,7 +60,7 @@ namespace Tick {
         private static int CheckTickRange(int tickToCheck) {
             var newTick = tickToCheck;
             if (newTick < 0) newTick = 0;
-            if (newTick > 4) newTick = 4;
+            if (newTick > 5) newTick = 5;
             return newTick;
         }
 

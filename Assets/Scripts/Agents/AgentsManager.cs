@@ -24,6 +24,8 @@ namespace Agents {
         [Header("Area")]
         [SerializeField] private BoxCollider area;
 
+        public BoxCollider GetArea() => area;
+
         private List<Agent> registeredAgents = new List<Agent>();
         public int GetAgentsCount() => registeredAgents.Count;
 
@@ -91,6 +93,12 @@ namespace Agents {
             }
 
             return false;
+        }
+
+        public void UpdateAgents() {
+            foreach (var agent in registeredAgents) {
+                agent.UpdateTweener();
+            }
         }
     }
 }

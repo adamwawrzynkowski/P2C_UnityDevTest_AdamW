@@ -47,6 +47,7 @@ namespace UI {
         public void RefreshTickUI() {
             // Set the visual representation to something more readable than range between 0-4
             var visualSpeedMark = TickManager.Instance.GetCurrentTick() switch {
+                5 => "x4",
                 4 => "x2",
                 3 => "x1",
                 2 => "x1/2",
