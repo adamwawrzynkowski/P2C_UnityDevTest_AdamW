@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using DG.Tweening;
 using Pathfinding;
@@ -8,10 +9,10 @@ using Random = UnityEngine.Random;
 
 namespace Agents {
     public class Agent : MonoBehaviour, IAgentService {
-        private double GUID = 0;
+        private Guid GUID;
 
-        public double GetGUID() => GUID;
-        public void SetGUID(double guid) => GUID = guid;
+        public Guid GetGUID() => GUID;
+        public void SetGUID(Guid guid) => GUID = guid;
 
         private Vector3 destinationPosition;
         private Tweener tweener;
@@ -49,7 +50,6 @@ namespace Agents {
 
         private void FindPath(BoxCollider area) {
             seeker.StartPath(transform.position, FindPoint(area), PathFound);
-            Debug.Log("Path: " + seeker.GetCurrentPath().vectorPath.Count);
         }
 
         private void PathFound(Path _path) {
@@ -92,6 +92,8 @@ namespace Agents {
 
         private void GoalCompleted() {
             GoToDestination();
+            
+            if (currentPathIndex != path.Length) return;
             UIManager.Instance.AddToConsole("Agent " + GUID + " arrived.");
         }
 

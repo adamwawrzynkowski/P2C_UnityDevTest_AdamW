@@ -63,9 +63,9 @@ namespace Agents {
         }
         
         private void RegisterAgent(Agent agent) {
-            var newGUID = Random.Range(1000000, 9999999);
+            var newGUID = Guid.NewGuid();
             while (CheckGUIDExists(newGUID)) {
-                newGUID = Random.Range(1000000, 9999999);
+                newGUID = Guid.NewGuid();
             }
             
             agent.SetGUID(newGUID);
@@ -90,7 +90,7 @@ namespace Agents {
             UIManager.Instance.RefreshAgentsUI();
         }
 
-        private bool CheckGUIDExists(double guid) {
+        private bool CheckGUIDExists(Guid guid) {
             foreach (var _ in registeredAgents.Where(agent => agent.GetGUID() == guid)) {
                 return true;
             }
