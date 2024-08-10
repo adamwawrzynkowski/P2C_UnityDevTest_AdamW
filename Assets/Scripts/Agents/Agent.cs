@@ -1,5 +1,6 @@
-using System;
+using System.Linq;
 using DG.Tweening;
+using Pathfinding;
 using Tick;
 using UI;
 using UnityEngine;
@@ -16,21 +17,24 @@ namespace Agents {
         private Tweener tweener;
         private LineRenderer lr;
         private Animator animator;
+        
+        private Seeker seeker;
+        private Vector3[] path;
+        private int currentPathIndex = 0;
 
         private void Awake() {
             lr = GetComponent<LineRenderer>();
             animator = GetComponentInChildren<Animator>();
+            seeker = GetComponent<Seeker>();
         }
 
         private void Update() {
-            transform.LookAt(new Vector3(destinationPosition.x, 0.0f, destinationPosition.z));
+            transform.DOLookAt(destinationPosition, 0.1f, AxisConstraint.Y);
             
-            if (lr == null) return;
+            if (lr == null || path == null) return;
             if (UIManager.Instance.GetTabPressed()) {
                 if (!lr.enabled) lr.enabled = true;
-                lr.SetPosition(0, transform.position);
-                lr.SetPosition(1, destinationPosition);
-                
+                lr.SetPositions(path.Reverse().ToArray());
                 return;
             }
             
@@ -43,8 +47,41 @@ namespace Agents {
             return new Vector3(randomBoundsX, 0.0f, randomBoundsZ);
         }
 
+        private void FindPath(BoxCollider area) {
+            seeker.StartPath(transform.position, FindPoint(area), PathFound);
+            Debug.Log("Path: " + seeker.GetCurrentPath().vectorPath.Count);
+        }
+
+        private void PathFound(Path _path) {
+            if (_path.error) {
+                Debug.LogError("Path failed: " + _path.errorLog);
+                return;
+            }
+            
+            path = _path.vectorPath.ToArray();
+            
+            currentPathIndex = 0;
+            GoToDestination();
+        }
+
         public void GoToDestination() {
-            destinationPosition = FindPoint(AgentsManager.Instance.GetArea());
+            if (path == null) {
+                FindPath(AgentsManager.Instance.GetArea());
+                return;
+            }
+            
+            if (currentPathIndex >= path.Length || currentPathIndex == -1) {
+                path = null;
+                
+                FindPath(AgentsManager.Instance.GetArea());
+                return;
+            }
+            
+            destinationPosition = path[currentPathIndex];
+            currentPathIndex++;
+            
+            lr.positionCount = path.Length + 1 - currentPathIndex;
+            
             tweener = transform.DOMove(
                 destinationPosition, 
                 GetDistance() / IAgentService.DefaultAgentMoveDuration
