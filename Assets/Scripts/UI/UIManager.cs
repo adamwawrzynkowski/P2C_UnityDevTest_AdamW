@@ -27,6 +27,9 @@ namespace UI {
         [SerializeField] private TMP_Text console;
 
         private List<string> consoleStrings = new List<string>();
+
+        private bool tabPressed;
+        public bool GetTabPressed() => tabPressed;
         
         private void Awake() {
             Instance = this;
@@ -44,6 +47,10 @@ namespace UI {
         private void Start() {
             RefreshTickUI();
             RefreshAgentsUI();
+        }
+
+        private void Update() {
+            tabPressed = Input.GetKey(KeyCode.Tab);
         }
 
         public void SetTickRate(int tickValue) {

@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using Tick;
 using UI;
@@ -13,6 +14,28 @@ namespace Agents {
 
         private Vector3 destinationPosition;
         private Tweener tweener;
+        private LineRenderer lr;
+        private Animator animator;
+
+        private void Awake() {
+            lr = GetComponent<LineRenderer>();
+            animator = GetComponentInChildren<Animator>();
+        }
+
+        private void Update() {
+            transform.LookAt(new Vector3(destinationPosition.x, 0.0f, destinationPosition.z));
+            
+            if (lr == null) return;
+            if (UIManager.Instance.GetTabPressed()) {
+                if (!lr.enabled) lr.enabled = true;
+                lr.SetPosition(0, transform.position);
+                lr.SetPosition(1, destinationPosition);
+                
+                return;
+            }
+            
+            if (lr.enabled) lr.enabled = false;
+        }
 
         public Vector3 FindPoint(BoxCollider area) {
             var randomBoundsX = Random.Range(area.bounds.min.x, area.bounds.max.x);
@@ -42,6 +65,7 @@ namespace Agents {
 
         public void UpdateTweener() {
             tweener.timeScale = TickManager.Instance.GetCurrentTickSpeed();
+            animator.speed = IAgentService.DefaultAnimationSpeed * TickManager.Instance.GetCurrentTickSpeed();
         }
 
         private float GetDistance() {
