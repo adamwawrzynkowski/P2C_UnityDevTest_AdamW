@@ -29,6 +29,7 @@ namespace Agents {
         private List<Agent> registeredAgents = new List<Agent>();
         public int GetAgentsCount() => registeredAgents.Count;
 
+        // Spawn new agent and register him
         public void RequestAgentSpawn() {
             var iterations = Input.GetKey(KeyCode.LeftShift) ? 10 : 1;
             for (var i = 0; i < iterations; i++) {
@@ -46,6 +47,7 @@ namespace Agents {
             }
         }
 
+        // Remove agent based on the given settings
         public void RequestAgentRemove(AgentRemoveType type) {
             if (registeredAgents == null || registeredAgents.Count <= 0) return;
             switch (type) {
@@ -62,6 +64,7 @@ namespace Agents {
             }
         }
         
+        // Register new agent and assign an GUID to him
         private void RegisterAgent(Agent agent) {
             var newGUID = Guid.NewGuid();
             while (CheckGUIDExists(newGUID)) {
@@ -74,6 +77,7 @@ namespace Agents {
             UIManager.Instance.RefreshAgentsUI();
         }
 
+        // Unregister agent and remove him from the list
         private void UnregisterAgent(Agent agent, bool modifyCollection = true) {
             if (modifyCollection) registeredAgents.RemoveAt(registeredAgents.FindIndex(a => agent == a));
             agent.Unregister();
@@ -81,6 +85,7 @@ namespace Agents {
             UIManager.Instance.RefreshAgentsUI();
         }
 
+        // Unregister all agents on the scene
         private void RemoveAllAgents() {
             foreach (var agent in registeredAgents.Where(agent => agent != null)) {
                 UnregisterAgent(agent, false);
@@ -90,6 +95,7 @@ namespace Agents {
             UIManager.Instance.RefreshAgentsUI();
         }
 
+        // Check if this GUID already exists on the list
         private bool CheckGUIDExists(Guid guid) {
             foreach (var _ in registeredAgents.Where(agent => agent.GetGUID() == guid)) {
                 return true;
